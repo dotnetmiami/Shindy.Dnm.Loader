@@ -84,10 +84,6 @@
     </None>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Content Include="dll\Shindy.Core.dll" />
-    <Content Include="dll\Shindy.Data.dll" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>cd $(ProjectDir)
