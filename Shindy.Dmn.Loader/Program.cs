@@ -10,6 +10,7 @@ using System.Data.Entity;
 using Shindy.Core.Entities;
 using Shindy.Data.SqlServer;
 using Shindy.Dmn.Loader.Dnm;
+using Session = Shindy.Dmn.Loader.Dnm.Session;
 
 namespace Shindy.Dmn.Loader
 {
@@ -103,7 +104,7 @@ namespace Shindy.Dmn.Loader
                     {
                         foreach (var hg in evnt.HostedGroups)
                         {
-                            var dnmOrg = shindyContext.Organizations.Where(p => p.OrgName == hg.Name).FirstOrDefault();
+                            var dnmOrg = shindyContext.Organizations.Where(p => p.Name == hg.Name).FirstOrDefault();
                             if (dnmOrg == null && hg.Name != "")
                             {
 
@@ -122,7 +123,7 @@ namespace Shindy.Dmn.Loader
                         foreach (var spon in evnt.Sponsors)
                         {
                             var dnmSponsor =
-                                shindyContext.Sponsors.Where(p => p.SponsorName == spon.Name).FirstOrDefault();
+                                shindyContext.Sponsors.Where(p => p.Name == spon.Name).FirstOrDefault();
 
                             if (dnmSponsor == null && spon.Name != "")
                             {
@@ -141,7 +142,7 @@ namespace Shindy.Dmn.Loader
                     if (evnt.EventLocation != null)
                     {
                         var dnmLocation =
-                            shindyContext.Locations.Where(p => p.LocationName == evnt.EventLocation.Name).FirstOrDefault();
+                            shindyContext.Locations.Where(p => p.Name == evnt.EventLocation.Name).FirstOrDefault();
 
                         if (dnmLocation == null)
                         {
@@ -158,11 +159,10 @@ namespace Shindy.Dmn.Loader
 
                             if (dnmEventSession == null)
                             {
-                                var dnmSessionType = shindyContext.SessionTypes.Where(p => p.SessionTypeName == sess.SessionType).FirstOrDefault();
+                                var dnmSessionType = shindyContext.SessionTypes.Where(p => p.Name == sess.SessionType).FirstOrDefault();
                                 if (dnmSessionType == null)
                                 {
-                                    dnmSessionType = new Shindy.Core.Entities.SessionType();
-                                    dnmSessionType.SessionTypeName = sess.SessionType;
+                                    dnmSessionType = CreateDnmSessionType(sess);
                                 }
 
                                 var dnmSession = CreateDnmSession(sess, dnmSessionType);
@@ -222,7 +222,7 @@ namespace Shindy.Dmn.Loader
             dnmEvent.Title = evnt.Title;
             dnmEvent.StartDate = evnt.EventDateTime;
             dnmEvent.CreatedDate = DateTime.Now;
-            dnmEvent.LastUpdatedDate = DateTime.Now;
+            dnmEvent.UpdatedDate = DateTime.Now;
             if (evnt.RegistrationURI != "")
             {
                 dnmEvent.RegistrationURI = evnt.RegistrationURI;
@@ -240,22 +240,22 @@ namespace Shindy.Dmn.Loader
             dnmOrgEvent.Event = dnmEvent;
             dnmOrgEvent.Organization = dnmOrg;
             dnmOrgEvent.CreatedDate = DateTime.Now;
-            dnmOrgEvent.LastUpdatedDate = DateTime.Now;
+            dnmOrgEvent.UpdatedDate = DateTime.Now;
             return dnmOrgEvent;
         }
 
         private static Shindy.Core.Entities.Organization CreateDnmOrg(Hostedgroup hg)
         {
             var dnmOrg = new Shindy.Core.Entities.Organization();
-            dnmOrg.OrgName = hg.Name;
+            dnmOrg.Name = hg.Name;
             if (hg.Name == "dotNet Miami")
             {
-                dnmOrg.OrgDescription =
+                dnmOrg.Description =
                     @"We are a group of developers that are passionate about technology. We primarily focus on Microsoft technologies but are open minded to other platforms and ways of thought. We are diverse in our experiences with technology some of us are seasoned corporate developers while others are students. Within the group we see each other as equals and are able to learn from our unique experiences.";
-                //dnmOrg.OrgURI = "http://dotnetmiami.com";
+                dnmOrg.OrgUri = "http://dotnetmiami.com";
             }
             dnmOrg.CreatedDate = DateTime.Now;
-            dnmOrg.LastUpdatedDate = DateTime.Now;
+            dnmOrg.UpdatedDate = DateTime.Now;
 
             return dnmOrg;
         }
@@ -263,7 +263,7 @@ namespace Shindy.Dmn.Loader
         private static Shindy.Core.Entities.Location CreateDnmLocation(Dnm.Event evnt)
         {
             var dnmLocation = new Shindy.Core.Entities.Location();
-            dnmLocation.LocationName = evnt.EventLocation.Name;
+            dnmLocation.Name = evnt.EventLocation.Name;
             if (evnt.EventLocation.LocationURI != "")
             {
                 dnmLocation.LocationURI = evnt.EventLocation.LocationURI;
@@ -274,14 +274,14 @@ namespace Shindy.Dmn.Loader
             dnmLocation.ZipCode = evnt.EventLocation.Address.ZipCode;
             dnmLocation.MapURI = evnt.EventLocation.Address.AddressURL;
             dnmLocation.CreatedDate = DateTime.Now;
-            dnmLocation.LastUpdatedDate = DateTime.Now;
+            dnmLocation.UpdatedDate = DateTime.Now;
             return dnmLocation;
         }
 
         private static Shindy.Core.Entities.Sponsor CreateDnmSponsor(Dnm.Sponsor spon)
         {
             var dnmSponsor = new Shindy.Core.Entities.Sponsor();
-            dnmSponsor.SponsorName = spon.Name;
+            dnmSponsor.Name = spon.Name;
             if (spon.SponsorURI != "")
             {
                 dnmSponsor.SponsorURI = spon.SponsorURI;
@@ -291,7 +291,7 @@ namespace Shindy.Dmn.Loader
                 dnmSponsor.ImageURI = spon.ImageURI;
             }
             dnmSponsor.CreatedDate = DateTime.Now;
-            dnmSponsor.LastUpdatedDate = DateTime.Now;
+            dnmSponsor.UpdatedDate = DateTime.Now;
             return dnmSponsor;
         }
 
@@ -300,7 +300,7 @@ namespace Shindy.Dmn.Loader
             var dnmEventSponsor = new Shindy.Core.Entities.EventSponsor();
             dnmEventSponsor.Sponsor = dnmSponsor;
             dnmEventSponsor.CreatedDate = DateTime.Now;
-            dnmEventSponsor.LastUpdatedDate = DateTime.Now;
+            dnmEventSponsor.UpdatedDate = DateTime.Now;
             return dnmEventSponsor;
         }
 
@@ -308,7 +308,7 @@ namespace Shindy.Dmn.Loader
         {
             var dnmSpeaker = new Shindy.Core.Entities.Speaker();
             dnmSpeaker.CreatedDate = DateTime.Now;
-            dnmSpeaker.LastUpdatedDate = DateTime.Now;
+            dnmSpeaker.UpdatedDate = DateTime.Now;
             dnmSpeaker.Person = dnmPerson;
             return dnmSpeaker;
         }
@@ -319,7 +319,7 @@ namespace Shindy.Dmn.Loader
             dnmPerson.FirstName = spkr.FirstName;
             dnmPerson.LastName = spkr.LastName;
             dnmPerson.CreatedDate = DateTime.Now;
-            dnmPerson.LastUpdatedDate = DateTime.Now;
+            dnmPerson.UpdatedDate = DateTime.Now;
             if (spkr.Bio != "")
             {
                 dnmPerson.Bio = spkr.Bio;
@@ -330,7 +330,7 @@ namespace Shindy.Dmn.Loader
             }
             if (spkr.PersonURI != "")
             {
-                dnmPerson.MemberURI = spkr.PersonURI;
+                dnmPerson.MemberUri = spkr.PersonURI;
             }
             return dnmPerson;
         }
@@ -344,8 +344,10 @@ namespace Shindy.Dmn.Loader
             {
                 dnmSession.Abstract = sess.Abstract;
             }
+            dnmSession.DemoUri = sess.DemoURI;
+            dnmSession.PresentationUri = sess.PresentationURI;
             dnmSession.CreatedDate = DateTime.Now;
-            dnmSession.LastUpdatedDate = DateTime.Now;
+            dnmSession.UpdatedDate = DateTime.Now;
             //if (dnmSession.PresentationURI != "") { dnmSession.PresentationURI = s.Abstract; }
             //if (dnmSession.DemoURI != "") { dnmSession.DemoURI = s.Abstract; }
 
@@ -358,9 +360,18 @@ namespace Shindy.Dmn.Loader
             EventSession dnmEventSession;
             dnmEventSession = new Shindy.Core.Entities.EventSession();
             dnmEventSession.CreatedDate = DateTime.Now;
-            dnmEventSession.LastUpdatedDate = DateTime.Now;
+            dnmEventSession.UpdatedDate = DateTime.Now;
             dnmEventSession.Session = dnmSession;
             return dnmEventSession;
+        }
+
+        private static Shindy.Core.Entities.SessionType CreateDnmSessionType(Session sess)
+        {
+            var dnmSessionType = new Shindy.Core.Entities.SessionType();
+            dnmSessionType.Name = sess.SessionType;
+            dnmSessionType.CreatedDate = DateTime.Now;
+            dnmSessionType.UpdatedDate = DateTime.Now;
+            return dnmSessionType;
         }
 
         public enum TransportType { http, file }
