@@ -84,7 +84,7 @@ namespace Shindy.Dmn.Loader
             using (var shindyContext = new Shindy.Data.SqlServer.ShindyContext())
             {
 
-                foreach (Dnm.Event evnt in events.Events)
+                foreach (Dnm.Event evnt in events.Events.OrderBy(e=>e.EventDateTime))
                 {
                     evnt.EventDateTime = evnt.EventDateTime.ToUniversalTime();
 
