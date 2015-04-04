@@ -4,13 +4,20 @@ Loads the dotNet Miami event.js file into the Shindy SQL Server database.
 ## Usage
 
 ### Get the Shindy project too
-In order to use Shindy.Dnm.Loader you will need the [Shindy project](https://github.com/dotnetmiami/Shindy). To save you hassle make sure that you put the Shindy project and the Shindy.Dnm.Loader project in the same folder. Why? Because Shindy.Dnm.Loader uses the Shindy.Core.dll and Shindy.Data.dll to load the data into your SQL Server of choice. We have created a Build Event that goes into the Shindy project and copies those dlls into the Loader project. So if you don't have the Shindy project no Loader for you.
+~~In order to use Shindy.Dnm.Loader you will need the [Shindy project](https://github.com/dotnetmiami/Shindy). To save you hassle make sure that you put the Shindy project and the Shindy.Dnm.Loader project in the same folder. Why? Because Shindy.Dnm.Loader uses the Shindy.Core.dll and Shindy.Data.dll to load the data into your SQL Server of choice. We have created a Build Event that goes into the Shindy project and copies those dlls into the Loader project. So if you don't have the Shindy project no Loader for you.~~
 
 ### Don't forget to build the Shindy project
-Once you get the Shindy project don't forget to build it. Because the Loader project can't copy dlls that don't exist.
+~~Once you get the Shindy project don't forget to build it. Because the Loader project can't copy dlls that don't exist.~~
+
+### Update (04/03/2015)
+This project now is self-contained and it builds on its own without the previous limitation of being placed at a certain location from the Shindy project.
+
+To clone this project, make sure you use the `recursive` option
+
+```git clone --recursive https://github.com/dotnetmiami/Shindy.Dnm.Loader.git```
 
 ### Create the Shindy database using Shindy.db in the Shindy project
-In the Shindy.Db project in Visual Studio double-click on the `Shindy.Db.publish.xml` file.. From there change your `Target Database Connection` to your local database. Then push `Publish`. It will deploy the database to your local SQL Server.
+In the Shindy.Db project from [Shindy project](https://github.com/dotnetmiami/Shindy), in Visual Studio double-click on the `Shindy.Db.publish.xml` file. From there change your `Target Database Connection` to your local database. In the publish dialog, make sure that the database version matches your Sql Server version. Then push `Publish`. It will deploy the database to your local SQL Server.
 
 ### Verify the ConnectionString in the App.Config
 In the App.Config file you'll find the connection string section. It' looks like this:
