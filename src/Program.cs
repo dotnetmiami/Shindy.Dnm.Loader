@@ -7,10 +7,10 @@ using System.Configuration;
 using Newtonsoft.Json;
 using CommandLine;
 using System.Data.Entity;
+using System.Diagnostics;
 using Shindy.Core.Entities;
 using Shindy.Data.SqlServer;
 using Shindy.Dmn.Loader.Dnm;
-using Session = Shindy.Dmn.Loader.Dnm.Session;
 
 namespace Shindy.Dmn.Loader
 {
@@ -25,16 +25,9 @@ namespace Shindy.Dmn.Loader
             parser.ParseArguments(args, options);
 
             if (options.JsonPath == null) { options.JsonPath = ConfigurationManager.AppSettings["JSONPath"]; }
-            
-            //TODO: Not used anymore
-            //if (options.ServerName == null) { options.ServerName = ConfigurationManager.AppSettings["ServerName"]; }
-            //if (options.DBName == null) { options.DBName = ConfigurationManager.AppSettings["DBName"]; }
-            //if (options.UserName == null) { options.UserName = ConfigurationManager.AppSettings["UserName"]; }
-
             if (options.DeleteExistingData) { DeleteExistingData(options.ResetIds); }
             LoadEvents(options);
 
-            Console.WriteLine("JSON file successfully loaded into {0}.", options.DBName);
             Console.ReadKey();
         }
 
@@ -43,7 +36,7 @@ namespace Shindy.Dmn.Loader
             using (var shindyContext = new Shindy.Data.SqlServer.ShindyContext())
             {
 
-                var deleteSql = @"DELETE FROM Attendee;
+                const string deleteSql = @"DELETE FROM Attendee;
                                   DELETE FROM Giveaway;
                                   DELETE FROM EventSponsor;
                                   DELETE FROM Sponsor;
@@ -60,7 +53,7 @@ namespace Shindy.Dmn.Loader
 
                 if (reseedTables)
                 {
-                    var reseedSql = @"DBCC CHECKIDENT ('Attendee', RESEED, 0);
+                    const string reseedSql = @"DBCC CHECKIDENT ('Attendee', RESEED, 0);
                                       DBCC CHECKIDENT ('Giveaway', RESEED, 0);
                                       DBCC CHECKIDENT ('EventSponsor', RESEED, 0);
                                       DBCC CHECKIDENT ('Sponsor', RESEED, 0);
@@ -79,13 +72,20 @@ namespace Shindy.Dmn.Loader
 
         public static void LoadEvents(Options options)
         {
+            var evntCtr = 0;
+            var loadWatch = new Stopwatch();
+            loadWatch.Start();
+
             var events = GetJsonData<Dnm.DnmEvents>(options.JsonPath);
 
             using (var shindyContext = new Shindy.Data.SqlServer.ShindyContext())
             {
 
-                foreach (Dnm.Event evnt in events.Events.OrderBy(e=>e.EventDateTime))
+                foreach (Dnm.Event evnt in events.Events.OrderBy(e => e.EventDateTime))
                 {
+                    var evntWatch = new Stopwatch();
+                    evntWatch.Start();
+
                     evnt.EventDateTime = evnt.EventDateTime.ToUniversalTime();
 
                     var dnmEvent = (from ev in shindyContext.Events
@@ -111,11 +111,11 @@ namespace Shindy.Dmn.Loader
                             {
 
                                 dnmOrg = CreateDnmOrg(hg);
-                                if (dnmOrg != null)
-                                {
-                                    var dnmOrgEvent = CreateDnmOrgEvent(dnmOrg, dnmEvent);
-                                    dnmEvent.OrgEvents.Add(dnmOrgEvent);
-                                }
+                            }
+                            if (dnmOrg != null)
+                            {
+                                var dnmOrgEvent = CreateDnmOrgEvent(dnmOrg, dnmEvent);
+                                dnmEvent.OrgEvents.Add(dnmOrgEvent);
                             }
                         }
                     }
@@ -198,6 +198,9 @@ namespace Shindy.Dmn.Loader
                     try
                     {
                         shindyContext.SaveChanges();
+                        evntCtr += 1;
+                        evntWatch.Stop();
+                        Console.WriteLine("{0} {1} {2} {3} ", evntCtr.ToString("00"), evntWatch.Elapsed.ToString("hh\\:mm\\:ss\\.fff"), evnt.EventDateTime.ToString("yy/mm/dd hh\\:mm"), evnt.Title.Left(45));
                     }
                     catch (System.Data.Entity.Validation.DbEntityValidationException e)
                     {
@@ -213,9 +216,10 @@ namespace Shindy.Dmn.Loader
                         }
                         throw;
                     }
-                    Console.WriteLine("Saved Event {0}", evnt.Title + " " + evnt.EventDateTime.ToString());
                 }
             }
+            loadWatch.Stop();
+            Console.WriteLine("Total Events Loaded: {0} Total Load Time: {1}",evntCtr, loadWatch.Elapsed.ToString("hh\\:mm\\:ss\\.fff"));
         }
 
         private static Shindy.Core.Entities.Event CreateDnmEvent(Dnm.Event evnt)
@@ -367,7 +371,7 @@ namespace Shindy.Dmn.Loader
             return dnmEventSession;
         }
 
-        private static Shindy.Core.Entities.SessionType CreateDnmSessionType(Session sess)
+        private static Shindy.Core.Entities.SessionType CreateDnmSessionType(Dnm.Session sess)
         {
             var dnmSessionType = new Shindy.Core.Entities.SessionType();
             dnmSessionType.Name = sess.SessionType;
@@ -442,5 +446,18 @@ namespace Shindy.Dmn.Loader
         }
     }
 
+    public static class StringExtensions
+    {
+        public static string Left(this string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value)) return value;
+            maxLength = Math.Abs(maxLength);
+
+            return (value.Length <= maxLength
+                   ? value
+                   : value.Substring(0, maxLength)
+                   );
+        }
+    }
 }
 
