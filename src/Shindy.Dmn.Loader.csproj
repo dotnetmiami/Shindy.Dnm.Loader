@@ -45,14 +45,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Shindy.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>dll\Shindy.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Shindy.Data, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>dll\Shindy.Data.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -74,6 +66,36 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ShindyEntities\src\Shindy.Core\Entities\Attendee.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Core\Entities\Event.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Core\Entities\EventSession.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Core\Entities\EventSponsor.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Core\Entities\Giveaway.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Core\Entities\Location.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Core\Entities\Member.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Core\Entities\Organization.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Core\Entities\OrgEvent.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Core\Entities\Person.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Core\Entities\Session.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Core\Entities\SessionType.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Core\Entities\Speaker.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Core\Entities\Sponsor.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Data\SqlServer\IShindyContext.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Data\SqlServer\Mapping\AttendeeMap.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Data\SqlServer\Mapping\EventMap.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Data\SqlServer\Mapping\EventSessionMap.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Data\SqlServer\Mapping\EventSponsorMap.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Data\SqlServer\Mapping\GiveawayMap.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Data\SqlServer\Mapping\LocationMap.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Data\SqlServer\Mapping\MemberMap.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Data\SqlServer\Mapping\OrganizationMap.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Data\SqlServer\Mapping\OrgEventMap.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Data\SqlServer\Mapping\PersonMap.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Data\SqlServer\Mapping\SessionMap.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Data\SqlServer\Mapping\SessionTypeMap.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Data\SqlServer\Mapping\SpeakerMap.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Data\SqlServer\Mapping\SponsorMap.cs" />
+    <Compile Include="ShindyEntities\src\Shindy.Data\SqlServer\ShindyContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -86,9 +108,9 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>cd $(ProjectDir)
-copy /y ..\..\Shindy\src\Shindy.Web\bin\Shindy.Core.dll "$(ProjectDir)dll\Shindy.Core.dll"
-copy /y ..\..\Shindy\src\Shindy.Web\bin\Shindy.Data.dll "$(ProjectDir)dll\Shindy.Data.dll"
+    <PreBuildEvent>REM cd $(ProjectDir)
+REM copy /y ..\..\Shindy\src\Shindy.Web\bin\Shindy.Core.dll "$(ProjectDir)dll\Shindy.Core.dll"
+REM copy /y ..\..\Shindy\src\Shindy.Web\bin\Shindy.Data.dll "$(ProjectDir)dll\Shindy.Data.dll"
 </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

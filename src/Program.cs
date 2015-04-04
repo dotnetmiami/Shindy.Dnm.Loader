@@ -25,9 +25,11 @@ namespace Shindy.Dmn.Loader
             parser.ParseArguments(args, options);
 
             if (options.JsonPath == null) { options.JsonPath = ConfigurationManager.AppSettings["JSONPath"]; }
-            if (options.ServerName == null) { options.ServerName = ConfigurationManager.AppSettings["ServerName"]; }
-            if (options.DBName == null) { options.DBName = ConfigurationManager.AppSettings["DBName"]; }
-            if (options.UserName == null) { options.UserName = ConfigurationManager.AppSettings["UserName"]; }
+            
+            //TODO: Not used anymore
+            //if (options.ServerName == null) { options.ServerName = ConfigurationManager.AppSettings["ServerName"]; }
+            //if (options.DBName == null) { options.DBName = ConfigurationManager.AppSettings["DBName"]; }
+            //if (options.UserName == null) { options.UserName = ConfigurationManager.AppSettings["UserName"]; }
 
             if (options.DeleteExistingData) { DeleteExistingData(options.ResetIds); }
             LoadEvents(options);
