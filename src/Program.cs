@@ -193,27 +193,27 @@ namespace Shindy.Dmn.Loader
                                 dnmEvent.EventSessions.Add(dnmEventSession);
                             }
                         }
-
-                        try
-                        {
-                            shindyContext.SaveChanges();
-                        }
-                        catch (System.Data.Entity.Validation.DbEntityValidationException e)
-                        {
-                            foreach (var eve in e.EntityValidationErrors)
-                            {
-                                System.Diagnostics.Debug.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-                                    eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                                foreach (var ve in eve.ValidationErrors)
-                                {
-                                    System.Diagnostics.Debug.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
-                                        ve.PropertyName, ve.ErrorMessage);
-                                }
-                            }
-                            throw;
-                        }
-                        Console.WriteLine("Saved Event {0}", evnt.Title + " " + evnt.EventDateTime.ToString());
                     }
+
+                    try
+                    {
+                        shindyContext.SaveChanges();
+                    }
+                    catch (System.Data.Entity.Validation.DbEntityValidationException e)
+                    {
+                        foreach (var eve in e.EntityValidationErrors)
+                        {
+                            System.Diagnostics.Debug.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                                eve.Entry.Entity.GetType().Name, eve.Entry.State);
+                            foreach (var ve in eve.ValidationErrors)
+                            {
+                                System.Diagnostics.Debug.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
+                                    ve.PropertyName, ve.ErrorMessage);
+                            }
+                        }
+                        throw;
+                    }
+                    Console.WriteLine("Saved Event {0}", evnt.Title + " " + evnt.EventDateTime.ToString());
                 }
             }
         }
