@@ -1,0 +1,3 @@
+[submodule "src/ShindyEntities"]
+	path = src/ShindyEntities
+	url = https://github.com/dotnetmiami/Shindy.git
